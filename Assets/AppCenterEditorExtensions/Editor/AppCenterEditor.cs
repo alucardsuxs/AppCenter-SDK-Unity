@@ -5,14 +5,15 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace AppCenterEditor 
+namespace AppCenterEditor
 {
-    public class AppCenterEditor : EditorWindow 
+    public class AppCenterEditor : EditorWindow
     {
         public static string latestEdExVersion = string.Empty;
+        public delegate void AppCenterEdExStateHandler(EdExStates state, string status, string misc);
+        public static event AppCenterEdExStateHandler EdExStateUpdate;
         internal static AppCenterEditor window;
 
-        #region unity loops & methods
         void OnEnable()
         {
             if (window == null)
@@ -27,7 +28,6 @@ namespace AppCenterEditor
         void OnDisable()
         {
             AppCenterEditorPrefsSO.Instance.PanelIsShown = false;
-
         }
 
         void OnFocus()
@@ -38,7 +38,7 @@ namespace AppCenterEditor
         [MenuItem("Window/AppCenter/Editor Extensions")]
         static void AppCenterServices()
         {
-            var editorAsm = typeof(UnityEditor.Editor).Assembly;
+            var editorAsm = typeof(Editor).Assembly;
             var inspWndType = editorAsm.GetType("UnityEditor.SceneHierarchyWindow");
 
             if (inspWndType == null)
@@ -58,12 +58,20 @@ namespace AppCenterEditor
             {
                 if (AppCenterEditorPrefsSO.Instance.PanelIsShown || !AppCenterEditorSDKTools.IsInstalled)
                 {
-                     EditorCoroutine.Start(OpenPlayServices());
+                    EditorCoroutine.Start(OpenAppCenterServices());
                 }
             }
         }
 
-        static IEnumerator OpenPlayServices()
+        public static void RaiseStateUpdate(EdExStates state, string status = null, string json = null)
+        {
+            if (EdExStateUpdate != null)
+            {
+                EdExStateUpdate(state, status, json);
+            }
+        }
+
+        static IEnumerator OpenAppCenterServices()
         {
             yield return new WaitForSeconds(1f);
             if (!Application.isPlaying)
@@ -111,8 +119,6 @@ namespace AppCenterEditor
 
             Repaint();
         }
-
-        #endregion
 
         private static void GetLatestEdExVersion()
         {
@@ -181,6 +187,13 @@ namespace AppCenterEditor
         private static void ImportLatestEdEx()
         {
 
+        }
+
+        public enum EdExStates
+        {
+            OnHttpReq,
+            OnHttpRes,
+            OnError
         }
     }
 }

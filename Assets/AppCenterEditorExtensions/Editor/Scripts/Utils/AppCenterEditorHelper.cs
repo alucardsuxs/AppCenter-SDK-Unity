@@ -13,8 +13,15 @@ namespace AppCenterEditor
         public static string EDEX_ROOT = Application.dataPath + "/AppCenterEditorExtensions/Editor";
         public static string APPCENTER_SETTINGS_TYPENAME = "AppCenterSettings";
         public static string DEFAULT_SDK_LOCATION = "Assets/AppCenter";
+        public static string MSG_SPIN_BLOCK = "{\"useSpinner\":true, \"blockUi\":true }";
+        public static string ANALYTICS_SDK_DOWNLOAD_PATH = "/Resources/AppCenterAnalyticsUnitySdk.unitypackage";
+        public static string CRASHES_SDK_DOWNLOAD_PATH = "/Resources/AppCenterCrashesUnitySdk.unitypackage";
+        public static string DISTRIBUTE_SDK_DOWNLOAD_PATH = "/Resources/AppCenterDistributeUnitySdk.unitypackage";
+        public static string EDEX_UPGRADE_PATH = "/Resources/AppCenterUnityEditorExtensions.unitypackage";
+        public static string EDEX_PACKAGES_PATH = "/Resources/MostRecentPackage.unitypackage";
 
         private static GUISkin _uiStyle;
+
         public static GUISkin uiStyle
         {
             get
@@ -24,6 +31,11 @@ namespace AppCenterEditor
                 _uiStyle = GetUiStyle();
                 return _uiStyle;
             }
+        }
+
+        public static void SharedErrorCallback(string error)
+        {
+            AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, "SharedErrorCallback" + error);
         }
 
         private static GUISkin GetUiStyle()

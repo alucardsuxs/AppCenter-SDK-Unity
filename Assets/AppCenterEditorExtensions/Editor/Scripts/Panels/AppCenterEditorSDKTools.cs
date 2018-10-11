@@ -17,20 +17,20 @@ namespace AppCenterEditor
         public static Type GetAppCenterSettings()
         {
             if (appCenterSettingsType == typeof(object))
-                return null; // Sentinel value to indicate that PlayFabSettings doesn't exist
+                return null; // Sentinel value to indicate that AppCenterSettings doesn't exist
             if (appCenterSettingsType != null)
                 return appCenterSettingsType;
 
-            appCenterSettingsType = typeof(object); // Sentinel value to indicate that PlayFabSettings doesn't exist
+            appCenterSettingsType = typeof(object); // Sentinel value to indicate that AppCenterSettings doesn't exist
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assembly in allAssemblies)
                 foreach (var eachType in assembly.GetTypes())
                     if (eachType.Name == AppCenterEditorHelper.APPCENTER_SETTINGS_TYPENAME)
                         appCenterSettingsType = eachType;
-            //if (playFabSettingsType == typeof(object))
+            //if (appCenterSettingsType == typeof(object))
             //    Debug.LogWarning("Should not have gotten here: "  + allAssemblies.Length);
             //else
-            //    Debug.Log("Found Settings: " + allAssemblies.Length + ", " + playFabSettingsType.Assembly.FullName);
+            //    Debug.Log("Found Settings: " + allAssemblies.Length + ", " + appCenterSettingsType.Assembly.FullName);
             return appCenterSettingsType == typeof(object) ? null : appCenterSettingsType;
         }
 
@@ -47,7 +47,7 @@ namespace AppCenterEditor
                 if (sdkFolder != null)
                 {
                     AppCenterEditorPrefsSO.Instance.SdkPath = AssetDatabase.GetAssetPath(sdkFolder);
-                    //PlayFabEditorDataService.SaveEnvDetails();
+                    //AppCenterEditorDataService.SaveEnvDetails();
                 }
             }
 
@@ -58,7 +58,7 @@ namespace AppCenterEditor
 
             //else
             //{
-                ShowSdkNotInstalledMenu();
+            ShowSdkNotInstalledMenu();
             //}
         }
 
@@ -72,7 +72,7 @@ namespace AppCenterEditor
 
         }
 
-        private static UnityEngine.Object FindSdkAsset() 
+        private static UnityEngine.Object FindSdkAsset()
         {
             UnityEngine.Object sdkAsset = null;
 
