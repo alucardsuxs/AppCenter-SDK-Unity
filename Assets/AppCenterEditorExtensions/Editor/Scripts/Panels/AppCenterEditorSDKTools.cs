@@ -120,7 +120,7 @@ namespace AppCenterEditor
 
                     var numerical = 0;
                     if (string.IsNullOrEmpty(installedSdkVersion) || versionNumber == null || versionNumber.Length == 0 ||
-                        (versionNumber.Length > 0 && int.TryParse(versionNumber[0], out numerical) && numerical < 2))
+                        (versionNumber.Length > 0 && int.TryParse(versionNumber[0], out numerical) && numerical < 0))
                     {
                         //older version of the SDK
                         using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
@@ -128,7 +128,7 @@ namespace AppCenterEditor
                             EditorGUILayout.LabelField("SDK is outdated. Consider upgrading to the get most features.", AppCenterEditorHelper.uiStyle.GetStyle("orTxt"));
                         }
                     }
-                    else if (numerical >= 2)
+                    else if (numerical >= 0)
                     {
                         isSdkSupported = true;
                     }
