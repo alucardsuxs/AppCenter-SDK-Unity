@@ -16,12 +16,14 @@ namespace AppCenterEditor
                 //Set the image in the container
                 if (EditorGUIUtility.currentViewWidth < 375)
                 {
-                    EditorGUILayout.LabelField("", AppCenterEditorHelper.uiStyle.GetStyle("pfLogo"), GUILayout.MaxHeight(40), GUILayout.Width(186));
+                    EditorGUILayout.LabelField("", AppCenterEditorHelper.uiStyle.GetStyle("acLogo"), GUILayout.MaxHeight(40), GUILayout.Width(40));
                 }
                 else
                 {
-                    EditorGUILayout.LabelField("", AppCenterEditorHelper.uiStyle.GetStyle("pfLogo"), GUILayout.MaxHeight(50), GUILayout.Width(233));
+                    EditorGUILayout.LabelField("", AppCenterEditorHelper.uiStyle.GetStyle("acLogo"), GUILayout.MaxHeight(50), GUILayout.Width(50));
                 }
+
+                EditorGUILayout.LabelField("App Center", AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray2"), GUILayout.MinHeight(32));
 
                 float gmAnchor = EditorGUIUtility.currentViewWidth - 30;
 
@@ -45,10 +47,6 @@ namespace AppCenterEditor
             }
 
             ProgressBar.Draw();
-
         }
     }
 }
-
-
-

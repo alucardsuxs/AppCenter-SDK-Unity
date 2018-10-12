@@ -1617,9 +1617,9 @@ MonoBehaviour:
     m_FixedHeight: 0
     m_StretchWidth: 0
     m_StretchHeight: 0
-  - m_Name: pfLogo
+  - m_Name: acLogo
     m_Normal:
-      m_Background: {fileID: 2800000, guid: 77e37f7fe73c7db4d9a1702eb4ad411b, type: 3}
+      m_Background: {fileID: 2800000, guid: 2778c316eec875d46bbd2ecbfba6db4a, type: 3}
       m_ScaledBackgrounds: []
       m_TextColor: {r: 0, g: 0, b: 0, a: 0}
     m_Hover:
