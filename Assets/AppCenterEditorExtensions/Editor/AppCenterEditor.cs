@@ -9,9 +9,16 @@ namespace AppCenterEditor
 {
     public class AppCenterEditor : EditorWindow
     {
-        public static string latestEdExVersion = string.Empty;
+        public enum EdExStates { OnMenuItemClicked, OnHttpReq, OnHttpRes, OnError, OnSuccess, OnWarning }
+
         public delegate void AppCenterEdExStateHandler(EdExStates state, string status, string misc);
         public static event AppCenterEdExStateHandler EdExStateUpdate;
+
+        public static Dictionary<string, float> blockingRequests = new Dictionary<string, float>(); // key and blockingRequest start time
+        private static float blockingRequestTimeOut = 10f; // abandon the block after this many seconds.
+
+        public static string latestEdExVersion = string.Empty;
+
         internal static AppCenterEditor window;
 
         void OnEnable()
@@ -22,12 +29,22 @@ namespace AppCenterEditor
                 window.minSize = new Vector2(320, 0);
             }
 
+            if (!IsEventHandlerRegistered(StateUpdateHandler))
+            {
+                EdExStateUpdate += StateUpdateHandler;
+            }
+
             GetLatestEdExVersion();
         }
 
         void OnDisable()
         {
             AppCenterEditorPrefsSO.Instance.PanelIsShown = false;
+
+            if (IsEventHandlerRegistered(StateUpdateHandler))
+            {
+                EdExStateUpdate -= StateUpdateHandler;
+            }
         }
 
         void OnFocus()
@@ -60,14 +77,6 @@ namespace AppCenterEditor
                 {
                     EditorCoroutine.Start(OpenAppCenterServices());
                 }
-            }
-        }
-
-        public static void RaiseStateUpdate(EdExStates state, string status = null, string json = null)
-        {
-            if (EdExStateUpdate != null)
-            {
-                EdExStateUpdate(state, status, json);
             }
         }
 
@@ -106,9 +115,10 @@ namespace AppCenterEditor
             using (new UnityVertical())
             {
                 //Run all updaters prior to drawing;
-                //AppCenterEditorHeader.DrawHeader();
+                AppCenterEditorHeader.DrawHeader();
 
-                //AppCenterEditorMenu.DrawMenu();
+                AppCenterEditorMenu.DrawMenu();
+
                 AppCenterEditorSDKTools.DrawSdkPanel();
 
                 using (new UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1"), GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true)))
@@ -117,8 +127,98 @@ namespace AppCenterEditor
                 }
             }
 
+            PruneBlockingRequests();
+
             Repaint();
         }
+
+        #region menu and helper methods
+
+        public static void RaiseStateUpdate(EdExStates state, string status = null, string json = null)
+        {
+            if (EdExStateUpdate != null)
+            {
+                EdExStateUpdate(state, status, json);
+            }
+        }
+
+        private static void PruneBlockingRequests()
+        {
+            List<string> itemsToRemove = new List<string>();
+            foreach (var req in blockingRequests)
+                if (req.Value + blockingRequestTimeOut < (float)EditorApplication.timeSinceStartup)
+                    itemsToRemove.Add(req.Key);
+
+            foreach (var item in itemsToRemove)
+            {
+                ClearBlockingRequest(item);
+                RaiseStateUpdate(EdExStates.OnWarning, string.Format(" Request {0} has timed out after {1} seconds.", item, blockingRequestTimeOut));
+            }
+        }
+
+        private static void AddBlockingRequest(string state)
+        {
+            blockingRequests[state] = (float)EditorApplication.timeSinceStartup;
+        }
+
+        private static void ClearBlockingRequest(string state = null)
+        {
+            if (state == null)
+            {
+                blockingRequests.Clear();
+            }
+            else if (blockingRequests.ContainsKey(state))
+            {
+                blockingRequests.Remove(state);
+            }
+        }
+        /// <summary>
+        /// Handles state updates within the editor extension.
+        /// </summary>
+        /// <param name="state">the state that triggered this event.</param>
+        /// <param name="status">a generic message about the status.</param>
+        /// <param name="json">a generic container for additional JSON encoded info.</param>
+        private void StateUpdateHandler(EdExStates state, string status, string json)
+        {
+            switch (state)
+            {
+                case EdExStates.OnMenuItemClicked:
+                    break;
+
+                case EdExStates.OnHttpReq:
+                    break;
+
+                case EdExStates.OnHttpRes:
+                    break;
+
+                case EdExStates.OnError:
+                    ProgressBar.UpdateState(ProgressBar.ProgressBarStates.error);
+                    Debug.LogError(string.Format("App Center EditorExtensions: Caught an error:{0}", status));
+                    break;
+
+                case EdExStates.OnWarning:
+                    ProgressBar.UpdateState(ProgressBar.ProgressBarStates.warning);
+                    Debug.LogWarning(string.Format("App Center EditorExtensions: {0}", status));
+                    break;
+
+                case EdExStates.OnSuccess:
+                    ProgressBar.UpdateState(ProgressBar.ProgressBarStates.success);
+                    break;
+            }
+        }
+
+        public static bool IsEventHandlerRegistered(AppCenterEdExStateHandler prospectiveHandler)
+        {
+            if (EdExStateUpdate == null)
+                return false;
+
+            foreach (AppCenterEdExStateHandler existingHandler in EdExStateUpdate.GetInvocationList())
+                if (existingHandler == prospectiveHandler)
+                    return true;
+            return false;
+        }
+
+        #endregion
 
         private static void GetLatestEdExVersion()
         {
@@ -187,13 +287,6 @@ namespace AppCenterEditor
         private static void ImportLatestEdEx()
         {
 
-        }
-
-        public enum EdExStates
-        {
-            OnHttpReq,
-            OnHttpRes,
-            OnError
         }
     }
 }

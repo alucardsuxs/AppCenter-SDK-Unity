@@ -53,5 +53,7 @@ namespace AppCenterEditor
         public string EdSet_latestEdExVersion { get { return _latestEdExVersion; } set { _latestEdExVersion = value; _lastEdExVersionCheck = DateTime.UtcNow; } }
         public DateTime EdSet_lastSdkVersionCheck { get { return _lastSdkVersionCheck; } }
         public DateTime EdSet_lastEdExVersionCheck { get { return _lastEdExVersionCheck; } }
+
+        public int curMainMenuIdx;
     }
 }

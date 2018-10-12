@@ -13,6 +13,7 @@ namespace AppCenterEditor
         private static Type appCenterSettingsType = null;
         private static bool isInitialized; //used to check once, gets reset after each compile;
         private static UnityEngine.Object sdkFolder;
+        public static bool isSdkSupported = true;
 
         public static Type GetAppCenterSettings()
         {
