@@ -247,11 +247,6 @@ namespace AppCenterEditor
             string[] currrent = installedSdkVersion.Split('.');
             string[] latest = latestSdkVersion.Split('.');
 
-            if (int.Parse(currrent[0]) < 2)
-            {
-                return false;
-            }
-
             return int.Parse(latest[0]) > int.Parse(currrent[0])
                 || int.Parse(latest[1]) > int.Parse(currrent[1])
                 || int.Parse(latest[2]) > int.Parse(currrent[2]);
@@ -268,7 +263,34 @@ namespace AppCenterEditor
 
         private static void RemoveSdk(bool prompt = true)
         {
+            if (prompt && !EditorUtility.DisplayDialog("Confirm SDK Removal", "This action will remove the current App Center SDK.", "Confirm", "Cancel"))
+            {
+                return;
+            }
 
+            if (Directory.Exists(Application.dataPath + "/Plugins/Android/res/values"))
+            {
+                var files = Directory.GetFiles(Application.dataPath + "/Plugins/Android/res/values", "appcenter-settings.xml*", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    FileUtil.DeleteFileOrDirectory(file);
+                }
+            }
+
+            if (FileUtil.DeleteFileOrDirectory(AppCenterEditorPrefsSO.Instance.SdkPath))
+            {
+                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnSuccess, "App Center SDK Removed!");
+
+                // HACK for 5.4, AssetDatabase.Refresh(); seems to cause the install to fail.
+                if (prompt)
+                {
+                    AssetDatabase.Refresh();
+                }
+            }
+            else
+            {
+                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, "An unknown error occured and the App Center SDK could not be removed.");
+            }
         }
 
         private static void CheckSdkVersion()
@@ -307,7 +329,20 @@ namespace AppCenterEditor
 
         private static void GetLatestSdkVersion()
         {
+            var threshold = AppCenterEditorPrefsSO.Instance.EdSet_lastSdkVersionCheck != DateTime.MinValue ? AppCenterEditorPrefsSO.Instance.EdSet_lastSdkVersionCheck.AddHours(1) : DateTime.MinValue;
 
+            if (DateTime.Today > threshold)
+            {
+                AppCenterEditorHttp.MakeGitHubApiCall("https://api.github.com/repos/Microsoft/AppCenter-SDK-Unity/git/refs/tags", (version) =>
+                {
+                    latestSdkVersion = version ?? "Unknown";
+                    AppCenterEditorPrefsSO.Instance.EdSet_latestSdkVersion = latestSdkVersion;
+                });
+            }
+            else
+            {
+                latestSdkVersion = AppCenterEditorPrefsSO.Instance.EdSet_latestSdkVersion;
+            }
         }
 
         private static UnityEngine.Object FindSdkAsset()
