@@ -247,12 +247,23 @@ namespace AppCenterEditor
 
         private static void RemoveSdk(bool prompt = true)
         {
-            if (prompt && !EditorUtility.DisplayDialog("Confirm SDK Removal", "This action will remove the current AppCenter SDK. Related plug-ins will need to be manually removed.", "Confirm", "Cancel"))
+            if (prompt && !EditorUtility.DisplayDialog("Confirm SDK Removal", "This action will remove the current App Center SDK.", "Confirm", "Cancel"))
+            {
                 return;
+            }
+
+            if (Directory.Exists(Application.dataPath + "/Plugins/Android/res/values"))
+            {
+                var files = Directory.GetFiles(Application.dataPath + "/Plugins/Android/res/values", "appcenter-settings.xml*", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    FileUtil.DeleteFileOrDirectory(file);
+                }
+            }
 
             if (FileUtil.DeleteFileOrDirectory(AppCenterEditorPrefsSO.Instance.SdkPath))
             {
-                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnSuccess, "AppCenter SDK Removed!");
+                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnSuccess, "App Center SDK Removed!");
 
                 // HACK for 5.4, AssetDatabase.Refresh(); seems to cause the install to fail.
                 if (prompt)
@@ -262,7 +273,7 @@ namespace AppCenterEditor
             }
             else
             {
-                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, "An unknown error occured and the AppCenter SDK could not be removed.");
+                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, "An unknown error occured and the App Center SDK could not be removed.");
             }
         }
 
