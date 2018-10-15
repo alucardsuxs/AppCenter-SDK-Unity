@@ -2,17 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace AppCenterEditor
 {
-    public class AppCenterEditorHttp
+    public class AppCenterEditorHttp : Editor
     {
         internal static void MakeDownloadCall(string url, Action<string> resultCallback)
         {
             var www = new WWW(url);
             AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnHttpReq, url, AppCenterEditorHelper.MSG_SPIN_BLOCK);
-            EditorCoroutine.Start(PostDownload(www, response => { WriteResultFile(url, resultCallback, response); }, AppCenterEditorHelper.SharedErrorCallback), www);
+            EditorCoroutine.Start(PostDownload(www, response =>
+            {
+                resultCallback(WriteResultFile(url, response));
+            }, AppCenterEditorHelper.SharedErrorCallback), www);
+        }
+
+        internal static void MakeDownloadCall(string[] urls, Action<IEnumerable<string>> resultCallback)
+        {
+            var wwws = new List<WWW>(urls.Length);
+            var downloadRequests = new List<DownloadRequest>(urls.Length);
+            foreach (var url in urls)
+            {
+                var www = new WWW(url);
+                wwws.Add(www);
+                downloadRequests.Add(new DownloadRequest(url, www));
+            }
+            AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnHttpReq, "Downloading files", AppCenterEditorHelper.MSG_SPIN_BLOCK);
+            EditorCoroutine.Start(DownloadFiles(downloadRequests, resultCallback, AppCenterEditorHelper.SharedErrorCallback), wwws);
         }
 
         internal static void MakeGitHubApiCall(string url, Action<string> resultCallback)
@@ -47,6 +65,26 @@ namespace AppCenterEditor
             }
         }
 
+        private static IEnumerator DownloadFiles(IEnumerable<DownloadRequest> downloadRequests, Action<IEnumerable<string>> resultCallback, Action<string> errorCallback)
+        {
+            var downloadedFiles = new List<string>();
+            foreach (var downloadRequest in downloadRequests)
+            {
+                yield return downloadRequest.WWW;
+                if (string.IsNullOrEmpty(downloadRequest.WWW.error))
+                {
+                    var downloadedFile = WriteResultFile(downloadRequest.Url, downloadRequest.WWW.bytes);
+                    downloadedFiles.Add(downloadedFile);
+                }
+                else
+                {
+                    errorCallback(downloadRequest.WWW.error);
+                    yield break;
+                }
+            }
+            resultCallback(downloadedFiles);
+        }
+
         private static void OnGitHubSuccess(Action<string> resultCallback, string response)
         {
             if (resultCallback == null)
@@ -73,7 +111,7 @@ namespace AppCenterEditor
             }
         }
 
-        private static void WriteResultFile(string url, Action<string> resultCallback, byte[] response)
+        private static string WriteResultFile(string url, byte[] response)
         {
             AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnHttpRes, url);
             string fileName;
@@ -81,15 +119,15 @@ namespace AppCenterEditor
             {
                 fileName = AppCenterEditorHelper.EDEX_UPGRADE_PATH;
             }
-            else if (url.IndexOf("unity-analytics-via-edex") > -1)
+            else if (url.IndexOf("AppCenterAnalytics-v") > -1)
             {
                 fileName = AppCenterEditorHelper.ANALYTICS_SDK_DOWNLOAD_PATH;
             }
-            else if (url.IndexOf("unity-crashes-via-edex") > -1)
+            else if (url.IndexOf("AppCenterCrashes-v") > -1)
             {
                 fileName = AppCenterEditorHelper.CRASHES_SDK_DOWNLOAD_PATH;
             }
-            else if (url.IndexOf("unity-distribute-via-edex") > -1)
+            else if (url.IndexOf("AppCenterDistribute-v") > -1)
             {
                 fileName = AppCenterEditorHelper.DISTRIBUTE_SDK_DOWNLOAD_PATH;
             }
@@ -105,7 +143,19 @@ namespace AppCenterEditor
                 Directory.CreateDirectory(fileSaveDirectory);
             }
             File.WriteAllBytes(fileSaveLocation, response);
-            resultCallback(fileSaveLocation);
+            return fileSaveLocation;
+        }
+
+        private class DownloadRequest
+        {
+            public string Url { get; private set; }
+            public WWW WWW { get; private set; }
+
+            public DownloadRequest(string url, WWW www)
+            {
+                Url = url;
+                WWW = www;
+            }
         }
     }
 }

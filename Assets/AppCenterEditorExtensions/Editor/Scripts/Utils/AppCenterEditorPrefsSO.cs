@@ -11,7 +11,21 @@ namespace AppCenterEditor
 #endif
     public class AppCenterEditorPrefsSO : ScriptableObject
     {
+        public string SdkPath;
+        public string EdExPath;
+        public bool PanelIsShown;
+        public int curMainMenuIdx;
+        private string _latestSdkVersion;
+        private string _latestEdExVersion;
+        private DateTime _lastSdkVersionCheck;
+        private DateTime _lastEdExVersionCheck;
         private static AppCenterEditorPrefsSO _instance;
+
+        public string EdSet_latestSdkVersion { get { return _latestSdkVersion; } set { _latestSdkVersion = value; _lastSdkVersionCheck = DateTime.UtcNow; } }
+        public string EdSet_latestEdExVersion { get { return _latestEdExVersion; } set { _latestEdExVersion = value; _lastEdExVersionCheck = DateTime.UtcNow; } }
+        public DateTime EdSet_lastSdkVersionCheck { get { return _lastSdkVersionCheck; } }
+        public DateTime EdSet_lastEdExVersionCheck { get { return _lastEdExVersionCheck; } }
+
         public static AppCenterEditorPrefsSO Instance
         {
             get
@@ -40,20 +54,5 @@ namespace AppCenterEditor
             EditorUtility.SetDirty(_instance);
             AssetDatabase.SaveAssets();
         }
-
-        public string SdkPath;
-        public string EdExPath;
-
-        private string _latestSdkVersion;
-        private string _latestEdExVersion;
-        private DateTime _lastSdkVersionCheck;
-        private DateTime _lastEdExVersionCheck;
-        public bool PanelIsShown;
-        public string EdSet_latestSdkVersion { get { return _latestSdkVersion; } set { _latestSdkVersion = value; _lastSdkVersionCheck = DateTime.UtcNow; } }
-        public string EdSet_latestEdExVersion { get { return _latestEdExVersion; } set { _latestEdExVersion = value; _lastEdExVersionCheck = DateTime.UtcNow; } }
-        public DateTime EdSet_lastSdkVersionCheck { get { return _lastSdkVersionCheck; } }
-        public DateTime EdSet_lastEdExVersionCheck { get { return _lastEdExVersionCheck; } }
-
-        public int curMainMenuIdx;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 
 namespace AppCenterEditor
 {
@@ -11,7 +12,7 @@ namespace AppCenterEditor
         private const float Tick = .02f;
         private readonly IEnumerator _routine;
         private SortedList<float, IEnumerator> _shouldRunAfterTimes = new SortedList<float, IEnumerator>();
-        private WWW _www;
+        private IEnumerable<WWW> _www;
         private float _timeCounter = 0;
 
         public string Id { get; private set; }
@@ -32,6 +33,11 @@ namespace AppCenterEditor
         }
 
         public static EditorCoroutine Start(IEnumerator routine, WWW www)
+        {
+            return Start(routine, new[] { www });
+        }
+
+        public static EditorCoroutine Start(IEnumerator routine, IEnumerable<WWW> www)
         {
             var coroutine = new EditorCoroutine(routine)
             {
@@ -59,7 +65,7 @@ namespace AppCenterEditor
             {
                 if (_www != null)
                 {
-                    if (_www.isDone && !_routine.MoveNext())
+                    if (_www.All(w => w.isDone) && !_routine.MoveNext())
                     {
                         Stop();
                     }

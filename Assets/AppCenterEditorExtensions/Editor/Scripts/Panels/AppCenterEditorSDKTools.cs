@@ -11,6 +11,9 @@ namespace AppCenterEditor
     {
         public static bool IsInstalled { get { return GetAppCenterSettings() != null; } }
 
+        private const string AnalyticsDownloadFormat = "https://github.com/Microsoft/AppCenter-SDK-Unity/releases/download/{0}/AppCenterAnalytics-v{0}.unitypackage";
+        private const string CrashesDownloadFormat = "https://github.com/Microsoft/AppCenter-SDK-Unity/releases/download/{0}/AppCenterCrashes-v{0}.unitypackage";
+        private const string DistributeDownloadFormat = "https://github.com/Microsoft/AppCenter-SDK-Unity/releases/download/{0}/AppCenterDistribute-v{0}.unitypackage";
         private static Type appCenterSettingsType = null;
         private static bool isInitialized; //used to check once, gets reset after each compile;
         private static string installedSdkVersion = string.Empty;
@@ -97,7 +100,6 @@ namespace AppCenterEditor
                 {
                     using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
                     {
-
                         GUILayout.FlexibleSpace();
 
                         if (GUILayout.Button("REMOVE SDK", AppCenterEditorHelper.uiStyle.GetStyle("textButton"), GUILayout.MinHeight(32), GUILayout.MinWidth(200)))
@@ -108,7 +110,6 @@ namespace AppCenterEditor
                         GUILayout.FlexibleSpace();
                     }
                 }
-
             }
 
             if (sdkFolder != null)
@@ -193,7 +194,22 @@ namespace AppCenterEditor
 
         public static void ImportLatestSDK()
         {
-
+            var downloadUrls = new[]
+            {
+                string.Format(AnalyticsDownloadFormat, latestSdkVersion),
+                string.Format(CrashesDownloadFormat, latestSdkVersion),
+                string.Format(DistributeDownloadFormat, latestSdkVersion)
+            };
+            AppCenterEditorHttp.MakeDownloadCall(downloadUrls, downloadedFiles =>
+            {
+                foreach (var file in downloadedFiles)
+                {
+                    AssetDatabase.ImportPackage(file, false);
+                    File.Delete(file);
+                }
+                AppCenterEditorPrefsSO.Instance.SdkPath = AppCenterEditorHelper.DEFAULT_SDK_LOCATION;
+                //AppCenterEditorDataService.SaveEnvDetails();
+            });
         }
 
         public static Type GetAppCenterSettings()
@@ -250,7 +266,7 @@ namespace AppCenterEditor
             }
         }
 
-        private static void RemoveSdk(bool prompt = true) 
+        private static void RemoveSdk(bool prompt = true)
         {
 
         }
@@ -271,7 +287,7 @@ namespace AppCenterEditor
                 }
                 catch (ReflectionTypeLoadException)
                 {
-                    // For this failure, silently skip this assembly unless we have some expectation that it contains PlayFab
+                    // For this failure, silently skip this assembly unless we have some expectation that it contains App Center
                     if (assembly.FullName.StartsWith("Assembly-CSharp")) // The standard "source-code in unity proj" assembly name
                         Debug.LogWarning("App Center EdEx Error, failed to access the main CSharp assembly that probably contains AppCenter. Please report this on the AppCenter site");
                     continue;

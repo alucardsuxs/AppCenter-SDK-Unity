@@ -41,8 +41,8 @@ namespace AppCenterEditor
         private static GUISkin GetUiStyle()
         {
             var searchRoot = string.IsNullOrEmpty(EDEX_ROOT) ? Application.dataPath : EDEX_ROOT;
-            var pfGuiPaths = Directory.GetFiles(searchRoot, "AppCenterStyles.guiskin", SearchOption.AllDirectories);
-            foreach (var eachPath in pfGuiPaths)
+            var guiPaths = Directory.GetFiles(searchRoot, "AppCenterStyles.guiskin", SearchOption.AllDirectories);
+            foreach (var eachPath in guiPaths)
             {
                 var loadPath = eachPath.Substring(eachPath.LastIndexOf("Assets/"));
                 return (GUISkin)AssetDatabase.LoadAssetAtPath(loadPath, typeof(GUISkin));
