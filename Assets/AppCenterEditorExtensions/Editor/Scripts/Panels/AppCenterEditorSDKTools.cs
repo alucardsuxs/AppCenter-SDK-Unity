@@ -231,11 +231,6 @@ namespace AppCenterEditor
             string[] currrent = installedSdkVersion.Split('.');
             string[] latest = latestSdkVersion.Split('.');
 
-            if (int.Parse(currrent[0]) < 2)
-            {
-                return false;
-            }
-
             return int.Parse(latest[0]) > int.Parse(currrent[0])
                 || int.Parse(latest[1]) > int.Parse(currrent[1])
                 || int.Parse(latest[2]) > int.Parse(currrent[2]);
@@ -291,7 +286,20 @@ namespace AppCenterEditor
 
         private static void GetLatestSdkVersion()
         {
+            var threshold = AppCenterEditorPrefsSO.Instance.EdSet_lastSdkVersionCheck != DateTime.MinValue ? AppCenterEditorPrefsSO.Instance.EdSet_lastSdkVersionCheck.AddHours(1) : DateTime.MinValue;
 
+            if (DateTime.Today > threshold)
+            {
+                AppCenterEditorHttp.MakeGitHubApiCall("https://api.github.com/repos/Microsoft/AppCenter-SDK-Unity/git/refs/tags", (version) =>
+                {
+                    latestSdkVersion = version ?? "Unknown";
+                    AppCenterEditorPrefsSO.Instance.EdSet_latestSdkVersion = latestSdkVersion;
+                });
+            }
+            else
+            {
+                latestSdkVersion = AppCenterEditorPrefsSO.Instance.EdSet_latestSdkVersion;
+            }
         }
 
         private static UnityEngine.Object FindSdkAsset()
