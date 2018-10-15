@@ -245,9 +245,25 @@ namespace AppCenterEditor
             }
         }
 
-        private static void RemoveSdk(bool prompt = true) 
+        private static void RemoveSdk(bool prompt = true)
         {
+            if (prompt && !EditorUtility.DisplayDialog("Confirm SDK Removal", "This action will remove the current AppCenter SDK. Related plug-ins will need to be manually removed.", "Confirm", "Cancel"))
+                return;
 
+            if (FileUtil.DeleteFileOrDirectory(AppCenterEditorPrefsSO.Instance.SdkPath))
+            {
+                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnSuccess, "AppCenter SDK Removed!");
+
+                // HACK for 5.4, AssetDatabase.Refresh(); seems to cause the install to fail.
+                if (prompt)
+                {
+                    AssetDatabase.Refresh();
+                }
+            }
+            else
+            {
+                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, "An unknown error occured and the AppCenter SDK could not be removed.");
+            }
         }
 
         private static void CheckSdkVersion()
