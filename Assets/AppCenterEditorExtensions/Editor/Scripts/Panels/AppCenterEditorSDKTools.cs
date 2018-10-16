@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -192,7 +193,7 @@ namespace AppCenterEditor
             }
         }
 
-        public static void ImportLatestSDK()
+        public static void ImportLatestSDK(string targetPath = null)
         {
             var downloadUrls = new[]
             {
@@ -209,7 +210,24 @@ namespace AppCenterEditor
                     Debug.Log("Deleteing file: " + file);
                     FileUtil.DeleteFileOrDirectory(file);
                 }
-                AppCenterEditorPrefsSO.Instance.SdkPath = AppCenterEditorHelper.DEFAULT_SDK_LOCATION;
+                if (string.IsNullOrEmpty(targetPath))
+                {
+                    AppCenterEditorPrefsSO.Instance.SdkPath = AppCenterEditorHelper.DEFAULT_SDK_LOCATION;
+                }
+                else
+                {
+                    if (Directory.Exists(AppCenterEditorHelper.DEFAULT_SDK_LOCATION_PATH))
+                    {
+                        var toMove = Directory.GetFiles(AppCenterEditorHelper.DEFAULT_SDK_LOCATION_PATH, "*", SearchOption.AllDirectories);
+                        foreach (var file in toMove)
+                        {
+                            var targetFilePath = file.Replace(AppCenterEditorHelper.DEFAULT_SDK_LOCATION, targetPath);
+                            FileUtil.MoveFileOrDirectory(file, targetFilePath);
+                        }
+                        FileUtil.DeleteFileOrDirectory(AppCenterEditorHelper.DEFAULT_SDK_LOCATION_PATH);
+                    }
+                    AppCenterEditorPrefsSO.Instance.SdkPath = targetPath;
+                }
                 //AppCenterEditorDataService.SaveEnvDetails();
             });
         }
@@ -258,8 +276,31 @@ namespace AppCenterEditor
         {
             if (EditorUtility.DisplayDialog("Confirm SDK Upgrade", "This action will remove the current App Center SDK and install the lastet version.", "Confirm", "Cancel"))
             {
-                //RemoveSdk(false);
-                ImportLatestSDK();
+                RemoveSdkBeforeUpdate();
+                ImportLatestSDK(AppCenterEditorPrefsSO.Instance.SdkPath);
+            }
+        }
+
+        private static void RemoveSdkBeforeUpdate()
+        {
+            var skippedFiles = new[]
+            {
+                "AppCenterSettings.asset",
+                "AppCenterSettings.asset.meta"
+            };
+
+            RemoveAndroidSettings();
+
+            var toDelete = new List<string>();
+            toDelete.AddRange(Directory.GetFiles(AppCenterEditorPrefsSO.Instance.SdkPath));
+            toDelete.AddRange(Directory.GetDirectories(AppCenterEditorPrefsSO.Instance.SdkPath));
+
+            foreach (var path in toDelete)
+            {
+                if (!skippedFiles.Contains(Path.GetFileName(path)))
+                {
+                    FileUtil.DeleteFileOrDirectory(path);
+                }
             }
         }
 
@@ -270,14 +311,7 @@ namespace AppCenterEditor
                 return;
             }
 
-            if (Directory.Exists(Application.dataPath + "/Plugins/Android/res/values"))
-            {
-                var files = Directory.GetFiles(Application.dataPath + "/Plugins/Android/res/values", "appcenter-settings.xml*", SearchOption.AllDirectories);
-                foreach (var file in files)
-                {
-                    FileUtil.DeleteFileOrDirectory(file);
-                }
-            }
+            RemoveAndroidSettings();
 
             if (FileUtil.DeleteFileOrDirectory(AppCenterEditorPrefsSO.Instance.SdkPath))
             {
@@ -292,6 +326,18 @@ namespace AppCenterEditor
             else
             {
                 AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, "An unknown error occured and the App Center SDK could not be removed.");
+            }
+        }
+
+        private static void RemoveAndroidSettings()
+        {
+            if (Directory.Exists(Application.dataPath + "/Plugins/Android/res/values"))
+            {
+                var files = Directory.GetFiles(Application.dataPath + "/Plugins/Android/res/values", "appcenter-settings.xml*", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    FileUtil.DeleteFileOrDirectory(file);
+                }
             }
         }
 
