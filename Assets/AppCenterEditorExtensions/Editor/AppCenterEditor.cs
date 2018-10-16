@@ -112,7 +112,7 @@ namespace AppCenterEditor
         {
             GUI.skin = AppCenterEditorHelper.uiStyle;
 
-            using (new UnityVertical())
+            using (new AppCenterGuiFieldHelper.UnityVertical())
             {
                 GUI.enabled = blockingRequests.Count == 0 && !EditorApplication.isCompiling;
 
@@ -133,9 +133,9 @@ namespace AppCenterEditor
 
         private static void DisplayEditorExtensionHelpMenu()
         {
-            using (new UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
+            using (new AppCenterGuiFieldHelper.UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
             {
-                using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
+                using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
                 {
                     GUILayout.FlexibleSpace();
                     EditorGUILayout.LabelField("App Center Editor Extensions: " + AppCenterEditorHelper.EDEX_VERSION, AppCenterEditorHelper.uiStyle.GetStyle("versionText"));
@@ -144,7 +144,7 @@ namespace AppCenterEditor
 
                 if (ShowEdExUpgrade())
                 {
-                    using (new UnityHorizontal())
+                    using (new AppCenterGuiFieldHelper.UnityHorizontal())
                     {
                         GUILayout.FlexibleSpace();
                         if (GUILayout.Button("UPGRADE EDITOR EXTENSION", AppCenterEditorHelper.uiStyle.GetStyle("textButtonOr")))
@@ -157,7 +157,7 @@ namespace AppCenterEditor
 
                 if (!string.IsNullOrEmpty(AppCenterEditorHelper.EDEX_ROOT))
                 {
-                    using (new UnityHorizontal())
+                    using (new AppCenterGuiFieldHelper.UnityHorizontal())
                     {
                         GUILayout.FlexibleSpace();
                         if (GUILayout.Button("UNINSTALL EDITOR EXTENSION", AppCenterEditorHelper.uiStyle.GetStyle("textButton")))

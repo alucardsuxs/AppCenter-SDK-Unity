@@ -142,7 +142,7 @@ namespace AppCenterEditor
 
             }
 
-            using (new UnityHorizontal(pbarBgStyle))
+            using (new AppCenterGuiFieldHelper.UnityHorizontal(pbarBgStyle))
             {
                 if (isReveresed)
                 {

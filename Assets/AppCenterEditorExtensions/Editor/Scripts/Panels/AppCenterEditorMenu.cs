@@ -25,7 +25,7 @@ namespace AppCenterEditor
             if (_menuState == MenuStates.Sdks)
                 sdksButtonStyle = AppCenterEditorHelper.uiStyle.GetStyle("textButton_selected");
 
-            using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1"), GUILayout.Height(25), GUILayout.ExpandWidth(true)))
+            using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1"), GUILayout.Height(25), GUILayout.ExpandWidth(true)))
             {
                 GUILayout.Space(5);
 
