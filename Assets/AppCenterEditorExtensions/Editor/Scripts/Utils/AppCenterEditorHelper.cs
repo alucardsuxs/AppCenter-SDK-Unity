@@ -12,6 +12,7 @@ namespace AppCenterEditor
         public static string EDEX_NAME = "AppCenter_EditorExtensions";
         public static string EDEX_ROOT = Application.dataPath + "/AppCenterEditorExtensions/Editor";
         public static string APPCENTER_SETTINGS_TYPENAME = "AppCenterSettings";
+        public static string APPCENTER_WRAPPER_SDK_TYPENAME = "WrapperSdk";
         public static string DEFAULT_SDK_LOCATION = "Assets/AppCenter";
         public static string MSG_SPIN_BLOCK = "{\"useSpinner\":true, \"blockUi\":true }";
         public static string ANALYTICS_SDK_DOWNLOAD_PATH = "/Resources/AppCenterAnalyticsUnitySdk.unitypackage";
