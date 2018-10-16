@@ -231,12 +231,12 @@ namespace AppCenterEditor
 
                 case EdExStates.OnError:
                     ProgressBar.UpdateState(ProgressBar.ProgressBarStates.error);
-                    Debug.LogError(string.Format("App Center EditorExtensions: Caught an error:{0}", status));
+                    Debug.LogError(string.Format("App Center Editor Extensions: {0}", status));
                     break;
 
                 case EdExStates.OnWarning:
                     ProgressBar.UpdateState(ProgressBar.ProgressBarStates.warning);
-                    Debug.LogWarning(string.Format("App Center EditorExtensions: {0}", status));
+                    Debug.LogWarning(string.Format("App Center Editor Extensions: {0}", status));
                     break;
 
                 case EdExStates.OnSuccess:

@@ -35,7 +35,7 @@ namespace AppCenterEditor
 
         public static void SharedErrorCallback(string error)
         {
-            AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, "SharedErrorCallback" + error);
+            AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnError, error);
         }
 
         private static GUISkin GetUiStyle()
