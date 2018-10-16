@@ -25,22 +25,15 @@ namespace AppCenterEditor
             if (_menuState == MenuStates.Sdks)
                 sdksButtonStyle = AppCenterEditorHelper.uiStyle.GetStyle("textButton_selected");
 
-            using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1"), GUILayout.Height(25), GUILayout.ExpandWidth(true)))
+            using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1"), GUILayout.Height(25), GUILayout.ExpandWidth(true)))
             {
                 GUILayout.Space(5);
 
                 if (GUILayout.Button("SDK", sdksButtonStyle, GUILayout.MaxWidth(35)))
                 {
-                    OnSdKsClicked();
+
                 }
             }
-        }
-
-        public static void OnSdKsClicked()
-        {
-            _menuState = MenuStates.Sdks;
-            AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnMenuItemClicked, MenuStates.Sdks.ToString());
-            AppCenterEditorPrefsSO.Instance.curMainMenuIdx = (int)_menuState;
         }
     }
 }

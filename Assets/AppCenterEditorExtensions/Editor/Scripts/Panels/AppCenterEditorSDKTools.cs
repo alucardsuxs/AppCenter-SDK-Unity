@@ -67,7 +67,7 @@ namespace AppCenterEditor
             }
 
             var labelStyle = new GUIStyle(AppCenterEditorHelper.uiStyle.GetStyle("titleLabel"));
-            using (new UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
+            using (new AppCenterGuiFieldHelper.UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
             {
                 EditorGUILayout.LabelField(string.Format("SDK {0} is installed", string.IsNullOrEmpty(installedSdkVersion) ? "Unknown" : installedSdkVersion),
                     labelStyle, GUILayout.MinWidth(EditorGUIUtility.currentViewWidth));
@@ -83,7 +83,7 @@ namespace AppCenterEditor
                         AppCenterEditorHelper.uiStyle.GetStyle("orTxt"));
                 }
 
-                using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
+                using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
                 {
                     GUILayout.FlexibleSpace();
                     sdkFolder = EditorGUILayout.ObjectField(sdkFolder, typeof(UnityEngine.Object), false, GUILayout.MaxWidth(200));
@@ -98,7 +98,7 @@ namespace AppCenterEditor
 
                 if (isSdkSupported && sdkFolder != null)
                 {
-                    using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
+                    using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
                     {
                         GUILayout.FlexibleSpace();
 
@@ -114,7 +114,7 @@ namespace AppCenterEditor
 
             if (sdkFolder != null)
             {
-                using (new UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
+                using (new AppCenterGuiFieldHelper.UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
                 {
                     isSdkSupported = false;
                     string[] versionNumber = !string.IsNullOrEmpty(installedSdkVersion) ? installedSdkVersion.Split('.') : new string[0];
@@ -124,7 +124,7 @@ namespace AppCenterEditor
                         (versionNumber.Length > 0 && int.TryParse(versionNumber[0], out numerical) && numerical < 0))
                     {
                         //older version of the SDK
-                        using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
+                        using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
                         {
                             EditorGUILayout.LabelField("SDK is outdated. Consider upgrading to the get most features.", AppCenterEditorHelper.uiStyle.GetStyle("orTxt"));
                         }
@@ -134,7 +134,7 @@ namespace AppCenterEditor
                         isSdkSupported = true;
                     }
 
-                    using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
+                    using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
                     {
                         if (ShowSDKUpgrade() && isSdkSupported)
                         {
@@ -155,7 +155,7 @@ namespace AppCenterEditor
                 }
             }
 
-            using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
+            using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
             {
                 GUILayout.FlexibleSpace();
 
@@ -170,14 +170,14 @@ namespace AppCenterEditor
 
         private static void ShowSdkNotInstalledMenu()
         {
-            using (new UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
+            using (new AppCenterGuiFieldHelper.UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
             {
                 var labelStyle = new GUIStyle(AppCenterEditorHelper.uiStyle.GetStyle("titleLabel"));
 
                 EditorGUILayout.LabelField("No SDK is installed.", labelStyle, GUILayout.MinWidth(EditorGUIUtility.currentViewWidth));
                 GUILayout.Space(20);
 
-                using (new UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
+                using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
                 {
                     var buttonWidth = 200;
 

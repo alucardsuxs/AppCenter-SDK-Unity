@@ -7,7 +7,7 @@ using System.IO;
 namespace AppCenterEditor
 {
 #if UNITY_5_3_OR_NEWER
-    [CreateAssetMenu(fileName = "AppCenterEditorPrefsSO", menuName = "AppCenter/Make Prefs SO", order = 1)]
+    [CreateAssetMenu(fileName = "AppCenterEditorPrefsSO", menuName = "App Center/Make Prefs SO", order = 1)]
 #endif
     public class AppCenterEditorPrefsSO : ScriptableObject
     {

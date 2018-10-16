@@ -52,7 +52,7 @@ namespace AppCenterEditor
             OnEnable();
         }
 
-        [MenuItem("Window/AppCenter/Editor Extensions")]
+        [MenuItem("Window/App Center/Editor Extensions")]
         static void AppCenterServices()
         {
             var editorAsm = typeof(Editor).Assembly;
@@ -112,7 +112,7 @@ namespace AppCenterEditor
         {
             GUI.skin = AppCenterEditorHelper.uiStyle;
 
-            using (new UnityVertical())
+            using (new AppCenterGuiFieldHelper.UnityVertical())
             {
                 GUI.enabled = blockingRequests.Count == 0 && !EditorApplication.isCompiling;
 
@@ -123,15 +123,51 @@ namespace AppCenterEditor
 
                 AppCenterEditorSDKTools.DrawSdkPanel();
 
-                using (new UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1"), GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true)))
-                {
-                    GUILayout.FlexibleSpace();
-                }
+                DisplayEditorExtensionHelpMenu();
             }
 
             PruneBlockingRequests();
 
             Repaint();
+        }
+
+        private static void DisplayEditorExtensionHelpMenu()
+        {
+            using (new AppCenterGuiFieldHelper.UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
+            {
+                using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleClear")))
+                {
+                    GUILayout.FlexibleSpace();
+                    EditorGUILayout.LabelField("App Center Editor Extensions: " + AppCenterEditorHelper.EDEX_VERSION, AppCenterEditorHelper.uiStyle.GetStyle("versionText"));
+                    GUILayout.FlexibleSpace();
+                }
+
+                if (ShowEdExUpgrade())
+                {
+                    using (new AppCenterGuiFieldHelper.UnityHorizontal())
+                    {
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button("UPGRADE EDITOR EXTENSION", AppCenterEditorHelper.uiStyle.GetStyle("textButtonOr")))
+                        {
+                            UpgradeEdEx();
+                        }
+                        GUILayout.FlexibleSpace();
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(AppCenterEditorHelper.EDEX_ROOT))
+                {
+                    using (new AppCenterGuiFieldHelper.UnityHorizontal())
+                    {
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button("UNINSTALL EDITOR EXTENSION", AppCenterEditorHelper.uiStyle.GetStyle("textButton")))
+                        {
+                            RemoveEdEx();
+                        }
+                        GUILayout.FlexibleSpace();
+                    }
+                }
+            }
         }
 
         #region menu and helper methods
