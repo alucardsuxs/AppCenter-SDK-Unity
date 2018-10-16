@@ -13,17 +13,8 @@ namespace AppCenterEditor
             //using Begin Vertical as our container.
             using (new UnityHorizontal(GUILayout.Height(52)))
             {
-                //Set the image in the container
-                if (EditorGUIUtility.currentViewWidth < 375)
-                {
-                    EditorGUILayout.LabelField("", AppCenterEditorHelper.uiStyle.GetStyle("acLogo"), GUILayout.MaxHeight(40), GUILayout.Width(40));
-                }
-                else
-                {
-                    EditorGUILayout.LabelField("", AppCenterEditorHelper.uiStyle.GetStyle("acLogo"), GUILayout.MaxHeight(50), GUILayout.Width(50));
-                }
-
-                EditorGUILayout.LabelField("App Center", AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray2"), GUILayout.MinHeight(32));
+                EditorGUILayout.LabelField("", AppCenterEditorHelper.uiStyle.GetStyle("acLogo"), GUILayout.MaxHeight(60), GUILayout.Width(60));
+                EditorGUILayout.LabelField("App Center", AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray2"), GUILayout.MinHeight(52));
 
                 float gmAnchor = EditorGUIUtility.currentViewWidth - 30;
 
