@@ -210,6 +210,7 @@ namespace AppCenterEditor
                 blockingRequests.Remove(state);
             }
         }
+
         /// <summary>
         /// Handles state updates within the editor extension.
         /// </summary>

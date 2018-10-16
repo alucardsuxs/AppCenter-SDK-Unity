@@ -207,7 +207,7 @@ namespace AppCenterEditor
                     Debug.Log("Importing package: " + file);
                     AssetDatabase.ImportPackage(file, false);
                     Debug.Log("Deleteing file: " + file);
-                    File.Delete(file);
+                    FileUtil.DeleteFileOrDirectory(file);
                 }
                 AppCenterEditorPrefsSO.Instance.SdkPath = AppCenterEditorHelper.DEFAULT_SDK_LOCATION;
                 //AppCenterEditorDataService.SaveEnvDetails();
@@ -256,9 +256,9 @@ namespace AppCenterEditor
 
         private static void UpgradeSdk()
         {
-            if (EditorUtility.DisplayDialog("Confirm SDK Upgrade", "This action will remove the current App Center SDK and install the lastet version. Related plug-ins will need to be manually upgraded.", "Confirm", "Cancel"))
+            if (EditorUtility.DisplayDialog("Confirm SDK Upgrade", "This action will remove the current App Center SDK and install the lastet version.", "Confirm", "Cancel"))
             {
-                RemoveSdk(false);
+                //RemoveSdk(false);
                 ImportLatestSDK();
             }
         }
@@ -281,7 +281,7 @@ namespace AppCenterEditor
 
             if (FileUtil.DeleteFileOrDirectory(AppCenterEditorPrefsSO.Instance.SdkPath))
             {
-                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnSuccess, "App Center SDK Removed!");
+                AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnSuccess, "App Center SDK removed.");
 
                 // HACK for 5.4, AssetDatabase.Refresh(); seems to cause the install to fail.
                 if (prompt)
@@ -369,7 +369,7 @@ namespace AppCenterEditor
             if (fileList.Length == 0)
                 return null;
 
-            var relPath = fileList[0].Substring(fileList[0].LastIndexOf("Assets/"));
+            var relPath = fileList[0].Substring(fileList[0].LastIndexOf("Assets" + Path.DirectorySeparatorChar));
             return AssetDatabase.LoadAssetAtPath(relPath, typeof(UnityEngine.Object));
         }
     }
