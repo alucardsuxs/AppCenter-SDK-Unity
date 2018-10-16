@@ -31,16 +31,9 @@ namespace AppCenterEditor
 
                 if (GUILayout.Button("SDK", sdksButtonStyle, GUILayout.MaxWidth(35)))
                 {
-                    OnSdKsClicked();
+
                 }
             }
-        }
-
-        public static void OnSdKsClicked()
-        {
-            _menuState = MenuStates.Sdks;
-            AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnMenuItemClicked, MenuStates.Sdks.ToString());
-            AppCenterEditorPrefsSO.Instance.curMainMenuIdx = (int)_menuState;
         }
     }
 }
