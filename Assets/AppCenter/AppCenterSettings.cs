@@ -37,8 +37,6 @@ public class AppCenterSettings : ScriptableObject
     [Tooltip("To enable push for Android apps, you need to set the Sender ID found in the Firebase portal for your application.")]
     public string SenderId;
 
-    public const string SdkVersion = "0.1.1";
-
     public string AppSecret
     {
         get
@@ -79,5 +77,5 @@ public class AppCenterSettings : ScriptableObject
             }
             return services.Where(i => i != null).ToArray();
         }
-    }   
+    }
 }

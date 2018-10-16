@@ -304,26 +304,28 @@ namespace AppCenterEditor
                 try
                 {
                     foreach (var type in assembly.GetTypes())
-                        if (type.Name == "AppCenterVersion" || type.Name == AppCenterEditorHelper.APPCENTER_SETTINGS_TYPENAME)
+                        if (type.Name == AppCenterEditorHelper.APPCENTER_WRAPPER_SDK_TYPENAME)
                             types.Add(type);
                 }
                 catch (ReflectionTypeLoadException)
                 {
                     // For this failure, silently skip this assembly unless we have some expectation that it contains App Center
                     if (assembly.FullName.StartsWith("Assembly-CSharp")) // The standard "source-code in unity proj" assembly name
-                        Debug.LogWarning("App Center EdEx Error, failed to access the main CSharp assembly that probably contains AppCenter. Please report this on the AppCenter site");
+                        Debug.LogWarning("App Center Editor Extension error, failed to access the main CSharp assembly that probably contains App Center SDK");
                     continue;
                 }
             }
 
             foreach (var type in types)
             {
-                foreach (var property in type.GetProperties())
-                    if (property.Name == "SdkVersion" || property.Name == "SdkRevision")
-                        installedSdkVersion += property.GetValue(property, null).ToString();
                 foreach (var field in type.GetFields())
-                    if (field.Name == "SdkVersion" || field.Name == "SdkRevision")
-                        installedSdkVersion += field.GetValue(field).ToString();
+                {
+                    if (field.Name == "WrapperSdkVersion")
+                    {
+                        installedSdkVersion = field.GetValue(field).ToString();
+                        break;
+                    }
+                }
             }
         }
 
