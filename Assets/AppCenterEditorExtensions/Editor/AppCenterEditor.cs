@@ -114,6 +114,8 @@ namespace AppCenterEditor
 
             using (new UnityVertical())
             {
+                GUI.enabled = blockingRequests.Count == 0 && !EditorApplication.isCompiling;
+
                 //Run all updaters prior to drawing;
                 AppCenterEditorHeader.DrawHeader();
 
