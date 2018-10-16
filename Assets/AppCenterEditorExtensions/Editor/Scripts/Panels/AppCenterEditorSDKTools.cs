@@ -161,7 +161,7 @@ namespace AppCenterEditor
 
                 if (GUILayout.Button("VIEW RELEASE NOTES", AppCenterEditorHelper.uiStyle.GetStyle("textButton"), GUILayout.MinHeight(32), GUILayout.MinWidth(200)))
                 {
-                    Application.OpenURL("https://github.com/Microsoft/AppCenter-SDK-Unity/blob/develop/RELEASE.md");
+                    Application.OpenURL("https://github.com/Microsoft/AppCenter-SDK-Unity/releases");
                 }
 
                 GUILayout.FlexibleSpace();
@@ -361,7 +361,7 @@ namespace AppCenterEditor
             if (sdkAsset != null)
                 return sdkAsset;
 
-            var fileList = Directory.GetDirectories(Application.dataPath, "*AppCenterSdk", SearchOption.AllDirectories);
+            var fileList = Directory.GetDirectories(Application.dataPath, "*AppCenter", SearchOption.AllDirectories);
             if (fileList.Length == 0)
                 return null;
 
