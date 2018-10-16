@@ -21,6 +21,7 @@ namespace AppCenterEditor
 
         internal static void MakeDownloadCall(string[] urls, Action<IEnumerable<string>> resultCallback)
         {
+            Debug.Log("Downloading files: " + string.Join(", ", urls));
             var wwws = new List<WWW>(urls.Length);
             var downloadRequests = new List<DownloadRequest>(urls.Length);
             foreach (var url in urls)

@@ -204,7 +204,9 @@ namespace AppCenterEditor
             {
                 foreach (var file in downloadedFiles)
                 {
+                    Debug.Log("Importing package: " + file);
                     AssetDatabase.ImportPackage(file, false);
+                    Debug.Log("Deleteing file: " + file);
                     File.Delete(file);
                 }
                 AppCenterEditorPrefsSO.Instance.SdkPath = AppCenterEditorHelper.DEFAULT_SDK_LOCATION;
