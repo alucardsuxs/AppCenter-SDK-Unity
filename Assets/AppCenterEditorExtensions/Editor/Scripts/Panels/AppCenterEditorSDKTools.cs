@@ -210,7 +210,7 @@ namespace AppCenterEditor
                     Debug.Log("Deleteing file: " + file);
                     FileUtil.DeleteFileOrDirectory(file);
                 }
-                if (string.IsNullOrEmpty(targetPath))
+                if (string.IsNullOrEmpty(targetPath) || targetPath == AppCenterEditorHelper.DEFAULT_SDK_LOCATION)
                 {
                     AppCenterEditorPrefsSO.Instance.SdkPath = AppCenterEditorHelper.DEFAULT_SDK_LOCATION;
                 }
