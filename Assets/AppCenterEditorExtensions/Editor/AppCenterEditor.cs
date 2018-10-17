@@ -304,13 +304,17 @@ namespace AppCenterEditor
             try
             {
                 window.Close();
-                var edExRoot = new DirectoryInfo(AppCenterEditorHelper.EDEX_ROOT);
-                FileUtil.DeleteFileOrDirectory(edExRoot.Parent.FullName);
+                var edExDirectory = new DirectoryInfo(AppCenterEditorHelper.EDEX_ROOT).Parent.FullName;
+                Debug.Log("Deleting directory: " + edExDirectory);
+                FileUtil.DeleteFileOrDirectory(edExDirectory);
+                var edExDirectoryMeta = edExDirectory + ".meta";
+                Debug.Log("Deleting file: " + edExDirectoryMeta);
+                FileUtil.DeleteFileOrDirectory(edExDirectoryMeta);
                 AssetDatabase.Refresh();
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex.Message);
+                Debug.LogError("Failed to remove App Center Editor Extensions: " + ex);
             }
         }
 

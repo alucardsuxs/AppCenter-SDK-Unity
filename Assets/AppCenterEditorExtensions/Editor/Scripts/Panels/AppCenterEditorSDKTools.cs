@@ -171,7 +171,6 @@ namespace AppCenterEditor
             }
         }
 
-
         private static void ShowSdkNotInstalledMenu()
         {
             using (new AppCenterGuiFieldHelper.UnityVertical(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
@@ -245,6 +244,7 @@ namespace AppCenterEditor
                 }
                 //AppCenterEditorDataService.SaveEnvDetails();
                 isInstalling = false;
+                Debug.Log("App Center SDK install complete");
             });
         }
 
@@ -331,6 +331,7 @@ namespace AppCenterEditor
 
             if (FileUtil.DeleteFileOrDirectory(AppCenterEditorPrefsSO.Instance.SdkPath))
             {
+                FileUtil.DeleteFileOrDirectory(AppCenterEditorPrefsSO.Instance.SdkPath + ".meta");
                 AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnSuccess, "App Center SDK removed.");
 
                 // HACK for 5.4, AssetDatabase.Refresh(); seems to cause the install to fail.
