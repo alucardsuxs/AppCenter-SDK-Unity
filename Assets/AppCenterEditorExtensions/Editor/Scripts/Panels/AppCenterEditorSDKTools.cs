@@ -23,6 +23,7 @@ namespace AppCenterEditor
         private static UnityEngine.Object _previousSdkFolderPath;
         private static bool isObjectFieldActive;
         public static bool isSdkSupported = true;
+        private static bool isInstalling = false;
 
         public static void DrawSdkPanel()
         {
@@ -181,14 +182,27 @@ namespace AppCenterEditor
                 using (new AppCenterGuiFieldHelper.UnityHorizontal(AppCenterEditorHelper.uiStyle.GetStyle("gpStyleGray1")))
                 {
                     var buttonWidth = 200;
+                     
+                    GUILayout.FlexibleSpace();
+                    if (isInstalling)
+                    {
+                        GUI.enabled = false;
+                        if (GUILayout.Button("SDK is installing", AppCenterEditorHelper.uiStyle.GetStyle("Button"), GUILayout.MaxWidth(buttonWidth), GUILayout.MinHeight(32)))
+                        { }
+                    }
+                    else
+                    {
+                        if (GUILayout.Button("Refresh", AppCenterEditorHelper.uiStyle.GetStyle("Button"), GUILayout.MaxWidth(buttonWidth), GUILayout.MinHeight(32)))
+                            appCenterSettingsType = null;
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button("Install App Center SDK", AppCenterEditorHelper.uiStyle.GetStyle("Button"), GUILayout.MaxWidth(buttonWidth), GUILayout.MinHeight(32)))
+                        {
+                            isInstalling = true;
+                            ImportLatestSDK();
+                        }
+                    }
+                    GUILayout.FlexibleSpace();
 
-                    GUILayout.FlexibleSpace();
-                    if (GUILayout.Button("Refresh", AppCenterEditorHelper.uiStyle.GetStyle("Button"), GUILayout.MaxWidth(buttonWidth), GUILayout.MinHeight(32)))
-                        appCenterSettingsType = null;
-                    GUILayout.FlexibleSpace();
-                    if (GUILayout.Button("Install App Center SDK", AppCenterEditorHelper.uiStyle.GetStyle("Button"), GUILayout.MaxWidth(buttonWidth), GUILayout.MinHeight(32)))
-                        ImportLatestSDK();
-                    GUILayout.FlexibleSpace();
                 }
             }
         }
@@ -229,6 +243,7 @@ namespace AppCenterEditor
                     AppCenterEditorPrefsSO.Instance.SdkPath = targetPath;
                 }
                 //AppCenterEditorDataService.SaveEnvDetails();
+                isInstalling = false;
             });
         }
 
