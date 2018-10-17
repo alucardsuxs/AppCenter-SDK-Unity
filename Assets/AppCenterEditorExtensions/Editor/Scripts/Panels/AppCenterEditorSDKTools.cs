@@ -207,7 +207,7 @@ namespace AppCenterEditor
             }
         }
 
-        public static void ImportLatestSDK(string targetPath = null)
+        public static void ImportLatestSDK(string existingSdkPath = null)
         {
             var downloadUrls = new[]
             {
@@ -224,24 +224,7 @@ namespace AppCenterEditor
                     Debug.Log("Deleteing file: " + file);
                     FileUtil.DeleteFileOrDirectory(file);
                 }
-                if (string.IsNullOrEmpty(targetPath) || targetPath == AppCenterEditorHelper.DEFAULT_SDK_LOCATION)
-                {
-                    AppCenterEditorPrefsSO.Instance.SdkPath = AppCenterEditorHelper.DEFAULT_SDK_LOCATION;
-                }
-                else
-                {
-                    if (Directory.Exists(AppCenterEditorHelper.DEFAULT_SDK_LOCATION_PATH))
-                    {
-                        var toMove = Directory.GetFiles(AppCenterEditorHelper.DEFAULT_SDK_LOCATION_PATH, "*", SearchOption.AllDirectories);
-                        foreach (var file in toMove)
-                        {
-                            var targetFilePath = file.Replace(AppCenterEditorHelper.DEFAULT_SDK_LOCATION, targetPath);
-                            FileUtil.MoveFileOrDirectory(file, targetFilePath);
-                        }
-                        FileUtil.DeleteFileOrDirectory(AppCenterEditorHelper.DEFAULT_SDK_LOCATION_PATH);
-                    }
-                    AppCenterEditorPrefsSO.Instance.SdkPath = targetPath;
-                }
+                AppCenterEditorPrefsSO.Instance.SdkPath = string.IsNullOrEmpty(existingSdkPath) ? AppCenterEditorHelper.DEFAULT_SDK_LOCATION : existingSdkPath;
                 //AppCenterEditorDataService.SaveEnvDetails();
                 isInstalling = false;
                 Debug.Log("App Center SDK install complete");
