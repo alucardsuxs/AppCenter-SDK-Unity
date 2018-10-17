@@ -9,6 +9,7 @@ namespace AppCenterEditor
 {
     public class AppCenterEditor : EditorWindow
     {
+        private const string EditorExtensionsDownloadFormat = "https://github.com/Microsoft/AppCenter-SDK-Unity/releases/download/{0}/AppCenterEditorExtensions-v{0}.unitypackage";
         public enum EdExStates { OnMenuItemClicked, OnHttpReq, OnHttpRes, OnError, OnSuccess, OnWarning }
 
         public delegate void AppCenterEdExStateHandler(EdExStates state, string status, string misc);
@@ -329,7 +330,15 @@ namespace AppCenterEditor
 
         private static void ImportLatestEdEx()
         {
-
+            var downloadUrl = string.Format(EditorExtensionsDownloadFormat, latestEdExVersion);
+            AppCenterEditorHttp.MakeDownloadCall(downloadUrl, file =>
+            {
+                Debug.Log("Importing package: " + file);
+                AssetDatabase.ImportPackage(file, false);
+                Debug.Log("Deleteing file: " + file);
+                FileUtil.DeleteFileOrDirectory(file);
+                Debug.Log("App Center Editor Extensions upgrade complete");
+            });
         }
     }
 }

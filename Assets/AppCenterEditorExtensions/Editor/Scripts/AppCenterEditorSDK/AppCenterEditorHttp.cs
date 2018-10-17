@@ -11,6 +11,7 @@ namespace AppCenterEditor
     {
         internal static void MakeDownloadCall(string url, Action<string> resultCallback)
         {
+            Debug.Log("Downloading file: " + url);
             var www = new WWW(url);
             AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnHttpReq, url, AppCenterEditorHelper.MSG_SPIN_BLOCK);
             EditorCoroutine.Start(PostDownload(www, response =>
@@ -116,7 +117,7 @@ namespace AppCenterEditor
         {
             AppCenterEditor.RaiseStateUpdate(AppCenterEditor.EdExStates.OnHttpRes, url);
             string fileName;
-            if (url.IndexOf("unity-edex") > -1)
+            if (url.IndexOf("AppCenterEditorExtension-v") > -1)
             {
                 fileName = AppCenterEditorHelper.EDEX_UPGRADE_PATH;
             }
