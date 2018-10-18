@@ -193,9 +193,6 @@ namespace AppCenterEditor
                     }
                     else
                     {
-                        if (GUILayout.Button("Refresh", AppCenterEditorHelper.uiStyle.GetStyle("Button"), GUILayout.MaxWidth(buttonWidth), GUILayout.MinHeight(32)))
-                            appCenterSettingsType = null;
-                        GUILayout.FlexibleSpace();
                         if (GUILayout.Button("Install App Center SDK", AppCenterEditorHelper.uiStyle.GetStyle("Button"), GUILayout.MaxWidth(buttonWidth), GUILayout.MinHeight(32)))
                         {
                             isInstalling = true;
