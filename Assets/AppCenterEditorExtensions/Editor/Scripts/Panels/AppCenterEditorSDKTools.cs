@@ -12,6 +12,7 @@ namespace AppCenterEditor
     {
         public static bool IsInstalled { get { return GetAppCenterSettings() != null; } }
 
+        private const string LatestKnownSdkVersion = "0.1.2";
         private const string AnalyticsDownloadFormat = "https://github.com/Microsoft/AppCenter-SDK-Unity/releases/download/{0}/AppCenterAnalytics-v{0}.unitypackage";
         private const string CrashesDownloadFormat = "https://github.com/Microsoft/AppCenter-SDK-Unity/releases/download/{0}/AppCenterCrashes-v{0}.unitypackage";
         private const string DistributeDownloadFormat = "https://github.com/Microsoft/AppCenter-SDK-Unity/releases/download/{0}/AppCenterDistribute-v{0}.unitypackage";
@@ -206,26 +207,51 @@ namespace AppCenterEditor
 
         public static void ImportLatestSDK(string existingSdkPath = null)
         {
-            var downloadUrls = new[]
+            string versionToDownload;
+            if (string.IsNullOrEmpty(latestSdkVersion) || latestSdkVersion == "Unknown")
             {
-                string.Format(AnalyticsDownloadFormat, latestSdkVersion),
-                string.Format(CrashesDownloadFormat, latestSdkVersion),
-                string.Format(DistributeDownloadFormat, latestSdkVersion)
-            };
-            AppCenterEditorHttp.MakeDownloadCall(downloadUrls, downloadedFiles =>
+                Debug.LogWarning("Failed to obtain latest SDK version, donwloading latest known version: " + LatestKnownSdkVersion);
+                versionToDownload = LatestKnownSdkVersion;
+            }
+            else
             {
-                foreach (var file in downloadedFiles)
+                Debug.Log("Downloading latest SDK version: " + latestSdkVersion);
+                versionToDownload = latestSdkVersion;
+            }
+            try
+            {
+                var downloadUrls = new[]
                 {
-                    Debug.Log("Importing package: " + file);
-                    AssetDatabase.ImportPackage(file, false);
-                    Debug.Log("Deleteing file: " + file);
-                    FileUtil.DeleteFileOrDirectory(file);
-                }
-                AppCenterEditorPrefsSO.Instance.SdkPath = string.IsNullOrEmpty(existingSdkPath) ? AppCenterEditorHelper.DEFAULT_SDK_LOCATION : existingSdkPath;
-                //AppCenterEditorDataService.SaveEnvDetails();
+                    string.Format(AnalyticsDownloadFormat, versionToDownload),
+                    string.Format(CrashesDownloadFormat, versionToDownload),
+                    string.Format(DistributeDownloadFormat, versionToDownload)
+                };
+                AppCenterEditorHttp.MakeDownloadCall(downloadUrls, downloadedFiles =>
+                {
+                    try
+                    {
+                        foreach (var file in downloadedFiles)
+                        {
+                            Debug.Log("Importing package: " + file);
+                            AssetDatabase.ImportPackage(file, false);
+                            Debug.Log("Deleteing file: " + file);
+                            FileUtil.DeleteFileOrDirectory(file);
+                        }
+                        AppCenterEditorPrefsSO.Instance.SdkPath = string.IsNullOrEmpty(existingSdkPath) ? AppCenterEditorHelper.DEFAULT_SDK_LOCATION : existingSdkPath;
+                        //AppCenterEditorDataService.SaveEnvDetails();
+                        Debug.Log("App Center SDK install complete");
+                    }
+                    finally
+                    {
+                        isInstalling = false;
+                    }
+                });
+            }
+            catch
+            {
                 isInstalling = false;
-                Debug.Log("App Center SDK install complete");
-            });
+                throw;
+            }
         }
 
         public static Type GetAppCenterSettings()
